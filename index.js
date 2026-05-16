@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = process.env.MONGODB_URI;
 
 const app = express();
@@ -28,7 +28,7 @@ async function run() {
 
     app.get("/destination", async (req, res) => {
       const result = await destinationsCollection.find().toArray();
-      res.send(result);
+      res.json(result);
 
     })
 
@@ -36,7 +36,13 @@ async function run() {
       const destinationData = req.body;
       const result = await destinationsCollection.insertOne(destinationData);
 
-      res.send(result);
+      res.json(result);
+    })
+
+    app.get("/destination/:id", async (req, res) => {
+      const { id } = req.params;
+      const result = await destinationsCollection.findOne({ _id: new ObjectId(id) });
+      res.json(result);
     })
 
 
